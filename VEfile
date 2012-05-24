@@ -1,0 +1,7 @@
+---
+profile: development
+
+requirements:
+  - nose
+  - fudge
+  - ipython
