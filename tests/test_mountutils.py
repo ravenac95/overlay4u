@@ -59,7 +59,7 @@ def test_split_mount_options():
     split_options = split_mount_options('opt1=val,opt2,opt3=val')
     assert split_options == [['opt1', 'val'], ['opt2'], ['opt3', 'val']]
 
-def test_parse_mount_entry():
+def test_mount_entry_from_string():
     tests = [
         # tests in the form of (entry_str, expected)
         (TEST_MOUNT_LIST_ENTRY1, (
@@ -76,20 +76,20 @@ def test_parse_mount_entry():
         )),
     ]
     for entry_str, expected in tests:
-        yield do_parse_mount_entry, entry_str, expected
+        yield do_mount_entry_from_string, entry_str, expected
 
-def do_parse_mount_entry(entry_str, expected):
-    mount_entry = MountEntry.parse(entry_str)
+def do_mount_entry_from_string(entry_str, expected):
+    mount_entry = MountEntry.from_string(entry_str)
     assert mount_entry.device == expected[0]
     assert mount_entry.directory == expected[1]
     assert mount_entry.fs_type == expected[2]
     assert mount_entry.options == expected[3]
 
-def test_parse_mount_table():
+def test_from_string_mount_table():
     fake_entry = fudge.Fake('MountEntry')
-    fake_entry.expects('parse').returns('anentry')
+    fake_entry.expects('from_string').returns('anentry')
 
-    mount_table = MountTable.parse(TEST_MOUNT_LIST, entry_class=fake_entry)
+    mount_table = MountTable.from_string(TEST_MOUNT_LIST, entry_class=fake_entry)
 
     assert mount_table.as_list() == ['anentry', 'anentry', 'anentry']
 

@@ -16,7 +16,7 @@ def split_mount_options(mount_options_str):
 
 class MountEntry(object):
     @classmethod
-    def parse(cls, entry_str):
+    def from_string(cls, entry_str):
         entry_dict = match_entry_line(entry_str)
         options = split_mount_options(entry_dict['raw_options'])
         return cls(entry_dict['point'], entry_dict['device'],
@@ -30,11 +30,11 @@ class MountEntry(object):
 
 class MountTable(object):
     @classmethod
-    def parse(cls, list_str, entry_class=None):
+    def from_string(cls, list_str, entry_class=None):
         entry_class = entry_class or MountEntry
         # Remove any trailing or preceding newlines
         list_str = list_str.strip()
-        entry_list = map(entry_class.parse, list_str.splitlines())
+        entry_list = map(entry_class.from_string, list_str.splitlines())
         return cls(entry_list)
 
     def __init__(self, entry_list):
