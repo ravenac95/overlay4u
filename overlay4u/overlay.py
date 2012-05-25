@@ -1,4 +1,5 @@
 import subprocess
+from .mountutils import MountTable
 
 class AlreadyMounted(Exception):
     pass
@@ -9,16 +10,21 @@ class FakeMountVerify(object):
 
 class OverlayFS(object):
     @classmethod
-    def mount(cls, mount_point, lower_dir, upper_dir, mount_verify=None):
+    def mount(cls, mount_point, lower_dir, upper_dir, mount_table=None):
         """Execute the mount. This requires root"""
-        # Calculate mount options
-        mount_verify = mount_verify or FakeMountVerify()
-        if mount_verify.is_mounted(mount_point):
+        # Load the mount table it isn't given
+        if not mount_table:
+            mount_table = MountTable.load()
+        # Check if the mount_point is in use
+        if mount_table.is_mounted(mount_point):
+            # Throw an error if it is
             raise AlreadyMounted()
-        options = "lowerdir=%s,upperdir=%s" % (lower_dir, upper_dir)
+        # Build mount options
+        options = "rw,lowerdir=%s,upperdir=%s" % (lower_dir, upper_dir)
         # Run the actual mount
         process = subprocess.Popen(['mount', '-t', 'overlayfs', '-o', options,
             'overlayfs', mount_point])
+        # Wait for the mount to complete
         process.wait()
         return cls(mount_point, lower_dir, upper_dir)
 

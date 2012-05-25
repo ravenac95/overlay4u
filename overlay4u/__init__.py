@@ -1,5 +1,5 @@
-from overlay import OverlayFS, AlreadyMounted
+from overlay import OverlayFS
 
-def mount(directory, lower_dir, upper_dir, mount_verify=None):
+def mount(directory, lower_dir, upper_dir, mount_table=None):
     """Creates a mount"""
-    return OverlayFS.mount(directory, lower_dir, upper_dir, mount_verify=mount_verify)
+    return OverlayFS.mount(directory, lower_dir, upper_dir, mount_table=mount_table)
