@@ -60,4 +60,7 @@ class MountTable(object):
             if entry.mount_point == mount_point:
                 found.append(entry)
         return found
-        
+
+    def is_mounted(self, mount_point):
+        results = self.find_by_mount_point(mount_point)
+        return len(results) != 0

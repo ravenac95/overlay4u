@@ -129,3 +129,11 @@ class TestMountTable(object):
         
         assert len(mounts_on_dir1) == 2
         assert len(mounts_on_dir2) == 1
+
+    def test_is_mounted(self):
+        assert self.mount_table.is_mounted('/somedir1') == True
+        assert self.mount_table.is_mounted('/somedir2') == True
+        assert self.mount_table.is_mounted('/somedir3') == True
+
+    def test_is_mounted_false(self):
+        assert self.mount_table.is_mounted('/somedir4') == False
