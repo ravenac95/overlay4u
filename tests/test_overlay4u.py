@@ -10,10 +10,10 @@ def test_fake_mount(fake_popen):
     fake_process = fake_popen.expects_call().returns_fake()
     fake_process.expects('wait')
 
-    overlay = overlay4u.mount('directory', 'lower', 'upper')
+    overlay = overlay4u.mount('mount_point', 'lower', 'upper')
 
     assert isinstance(overlay, OverlayFS) == True
-    assert overlay.directory == 'directory'
+    assert overlay.mount_point == 'mount_point'
     assert overlay.lower_dir == 'lower'
     assert overlay.upper_dir == 'upper'
 
@@ -22,12 +22,12 @@ def test_fake_mount(fake_popen):
 def test_fake_mount_twice(fake_popen):
     # Setup fake mount state checker
     fake_mount_verify = fudge.Fake('mount_verify')
-    (fake_mount_verify.expects('is_mounted').with_args('directory')
+    (fake_mount_verify.expects('is_mounted').with_args('mount_point')
             .returns(True))
     
     # Make a stub for popen. just in case it gets through
     fake_popen.is_a_stub()
 
     # Use dependency injection to change mount verification technique
-    overlay = overlay4u.mount('directory', 'lower', 'upper', 
+    overlay = overlay4u.mount('mount_point', 'lower', 'upper', 
             mount_verify=fake_mount_verify)
