@@ -1,14 +1,12 @@
 """
-tests.test_mountlist
-~~~~~~~~~~~~~~~~
+tests.test_mountutils
+~~~~~~~~~~~~~~~~~~~~~
 
 Tests the MountTable. This will be used to determine if a directory is
 currently mounted as an overlay at this time.
 """
 import fudge
 from overlay4u.mountutils import *
-
-
 
 TEST_MOUNT_LIST_ENTRY1 = 'dev on /dir type fstype (opt1,opt2,opt3=val)'
 TEST_MOUNT_LIST_ENTRY2 = '/dev2 on /dir2 type fstype2 (opt1=val,opt2,opt3=val)'
@@ -107,6 +105,14 @@ device2 on /somedir2 type fstype (opt1,opt2,opt3=val)
 device3 on /somedir3 type fstype (opt1,opt2,opt3=val)
 device4 on /somedir1 type fstype (opt1,opt2,opt3=val)
 """
+
+@fudge.patch('subprocess.Popen')
+def test_mount_table_fake_load(fake_popen):
+    fake_process = fake_popen.expects_call().returns_fake()
+    fake_process.expects('communicate').returns((TEST_MOUNT_LIST2, ""))
+
+    mount_table = MountTable.load()
+    assert len(mount_table.as_list()) == 4
 
 class TestMountTable(object):
     def setup(self):

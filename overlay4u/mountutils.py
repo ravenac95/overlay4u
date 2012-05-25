@@ -1,4 +1,5 @@
 import re
+import subprocess
 
 DIR_REGEX = r'[\w\/\.-]+'
 MAIN_REGEX_RAW = r'^(?P<device>%s) on (?P<point>%s) type (?P<fs_type>\w+) \((?P<raw_options>.*)\)$'
@@ -36,6 +37,12 @@ class MountTable(object):
         list_str = list_str.strip()
         entry_list = map(entry_class.from_string, list_str.splitlines())
         return cls(entry_list)
+
+    @classmethod
+    def load(cls, entry_class=None):
+        process = subprocess.Popen(['mount'])
+        stdout, stderr = process.communicate()
+        return cls.from_string(stdout)
 
     def __init__(self, entry_list):
         self._entries = entry_list
