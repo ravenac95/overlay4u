@@ -40,7 +40,8 @@ class MountTable(object):
 
     @classmethod
     def load(cls, entry_class=None):
-        process = subprocess.Popen(['mount'])
+        process = subprocess.Popen(['mount'], stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         return cls.from_string(stdout)
 
