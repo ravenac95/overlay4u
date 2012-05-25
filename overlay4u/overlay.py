@@ -28,6 +28,10 @@ class OverlayFS(object):
         process.wait()
         return cls(mount_point, lower_dir, upper_dir)
 
+    def unmount(self):
+        process = subprocess.Popen(['umount', self.mount_point])
+        process.wait()
+
     def __init__(self, mount_point, lower_dir, upper_dir):
         self.mount_point = mount_point
         self.lower_dir = lower_dir

@@ -23,8 +23,7 @@ def test_fake_mount(fake_popen):
     assert overlay.lower_dir == 'lower'
     assert overlay.upper_dir == 'upper'
 
-@fudge.patch('subprocess.Popen', 
-    'overlay4u.overlay.MountTable')
+@fudge.patch('subprocess.Popen', 'overlay4u.overlay.MountTable')
 def test_fake_mount_with_fake_table(fake_popen, fake_table_class):
     fake_popen.is_a_stub()
     fake_table = fake_table_class.expects('load').returns_fake()
@@ -46,3 +45,15 @@ def test_fake_mount_twice(fake_popen):
     # Use dependency injection to change mount verification technique
     overlay = overlay4u.mount('mount_point', 'lower', 'upper', 
             mount_table=fake_mount_table)
+
+@fudge.patch('subprocess.Popen', 'overlay4u.overlay.MountTable')
+def test_fake_unmount(fake_popen, fake_table_class):
+    # Tests that unmount method exists. 
+    # FIXME we need to make this a bit better
+    fake_popen.is_a_stub()
+    
+    fake_table = fake_table_class.expects('load').returns_fake()
+    fake_table.expects('is_mounted').returns(False)
+
+    overlay = overlay4u.mount('mount_point', 'lower', 'upper')
+    overlay.unmount()
