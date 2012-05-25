@@ -15,6 +15,7 @@ TEST_MOUNT_LIST_ENTRY2 = '/dev2 on /dir2 type fstype2 (opt1=val,opt2,opt3=val)'
 TEST_MOUNT_LIST_ENTRY3 = '/dev3/.dir on /dir3/.dir type fstype2 (opt1=val,opt2,opt3=val)'
 TEST_MOUNT_LIST_ENTRY4 = '/dev4/dir-with-dash on /dir4/dir-with-dash type fstype2 (opt1=val,opt2,opt3=val)'
 
+
 def test_generated_match_entry_line():
     tests = [
         (TEST_MOUNT_LIST_ENTRY1, (
@@ -81,21 +82,44 @@ def test_mount_entry_from_string():
 def do_mount_entry_from_string(entry_str, expected):
     mount_entry = MountEntry.from_string(entry_str)
     assert mount_entry.device == expected[0]
-    assert mount_entry.directory == expected[1]
+    assert mount_entry.mount_point == expected[1]
     assert mount_entry.fs_type == expected[2]
     assert mount_entry.options == expected[3]
+
+TEST_MOUNT_LIST1 = """
+entry
+entry
+entry
+"""
 
 def test_from_string_mount_table():
     fake_entry = fudge.Fake('MountEntry')
     fake_entry.expects('from_string').returns('anentry')
 
-    mount_table = MountTable.from_string(TEST_MOUNT_LIST, entry_class=fake_entry)
+    mount_table = MountTable.from_string(TEST_MOUNT_LIST1,
+            entry_class=fake_entry)
 
     assert mount_table.as_list() == ['anentry', 'anentry', 'anentry']
 
-
-TEST_MOUNT_LIST = """
-device1 on /somedir type fstype (opt1,opt2,opt3=val)
-device2 on /somedir type fstype (opt1,opt2,opt3=val)
-device3 on /somedir type fstype (opt1,opt2,opt3=val)
+TEST_MOUNT_LIST2 = """
+device1 on /somedir1 type fstype (opt1,opt2,opt3=val)
+device2 on /somedir2 type fstype (opt1,opt2,opt3=val)
+device3 on /somedir3 type fstype (opt1,opt2,opt3=val)
+device4 on /somedir1 type fstype (opt1,opt2,opt3=val)
 """
+
+class TestMountTable(object):
+    def setup(self):
+        self.mount_table = MountTable.from_string(TEST_MOUNT_LIST2)
+
+    def test_list_mount_points(self):
+        mount_points_set = set(self.mount_table.list_mount_points())
+        assert mount_points_set == set(['/somedir1', '/somedir2', '/somedir3'])
+
+    def test_find_by_mount_point(self):
+        """Test getting entries by the mount point"""
+        mounts_on_dir1 = self.mount_table.find_by_mount_point('/somedir1')
+        mounts_on_dir2 = self.mount_table.find_by_mount_point('/somedir2')
+        
+        assert len(mounts_on_dir1) == 2
+        assert len(mounts_on_dir2) == 1

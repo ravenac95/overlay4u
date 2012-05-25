@@ -22,8 +22,8 @@ class MountEntry(object):
         return cls(entry_dict['point'], entry_dict['device'],
                 entry_dict['fs_type'], options)
 
-    def __init__(self, directory, device, fs_type, options):
-        self.directory = directory
+    def __init__(self, mount_point, device, fs_type, options):
+        self.mount_point = mount_point
         self.device = device
         self.fs_type = fs_type
         self.options = options
@@ -41,4 +41,15 @@ class MountTable(object):
         self._entries = entry_list
 
     def as_list(self):
-        return self._entries            
+        return self._entries
+
+    def list_mount_points(self):
+        return map(lambda a: a.mount_point, self._entries)
+
+    def find_by_mount_point(self, mount_point):
+        found = []
+        for entry in self._entries:
+            if entry.mount_point == mount_point:
+                found.append(entry)
+        return found
+        
