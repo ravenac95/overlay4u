@@ -3,5 +3,5 @@ profile: development
 
 requirements:
   - nose
-  - fudge
+  - testkit
   - ipython

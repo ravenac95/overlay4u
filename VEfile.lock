@@ -1,3 +1,4 @@
 nose (nose==1.1.2)
-fudge (fudge==1.0.3)
+testkit (testkit==0.1.1)
+  fudge (fudge==1.0.3)
 ipython (ipython==0.12.1)
