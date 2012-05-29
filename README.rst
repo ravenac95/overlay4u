@@ -19,12 +19,8 @@ this time that's the first priority.
 Currently Working
 -----------------
 
-- Mounting works! (Not fully tested)
+- Mounting works! (Tested and works)
 - Creating a table of mounted filesystems
-
-TODO
-----
-
 - Unmounting
 
 Possible interface examples
