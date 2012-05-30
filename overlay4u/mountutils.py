@@ -1,5 +1,5 @@
 import re
-import subprocess
+import subwrap
 
 DIR_REGEX = r'[\w\/\.-]+'
 MAIN_REGEX_RAW = r'^(?P<device>%s) on (?P<point>%s) type (?P<fs_type>\w+) \((?P<raw_options>.*)\)$'
@@ -9,11 +9,18 @@ MAIN_REGEX_OBJ = re.compile(MAIN_REGEX)
 def match_entry_line(str_to_match, regex_obj=MAIN_REGEX_OBJ):
     """Does a regex match of the mount entry string"""
     match_obj = regex_obj.match(str_to_match)
+    if not match_obj:
+        error_message = ('Line "%s" is unrecognized by overlay4u. '
+                'This is only meant for use with Ubuntu Linux.')
+        raise UnrecognizedMountEntry(error_message % str_to_match)
     return match_obj.groupdict()
 
 def split_mount_options(mount_options_str):
     split_options = mount_options_str.split(',')
     return map(lambda a: a.split('='), split_options)
+
+class UnrecognizedMountEntry(Exception):
+    pass
 
 class MountEntry(object):
     @classmethod
@@ -40,10 +47,8 @@ class MountTable(object):
 
     @classmethod
     def load(cls, entry_class=None):
-        process = subprocess.Popen(['mount'], stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
-        return cls.from_string(stdout)
+        response = subwrap.run(['mount'])
+        return cls.from_string(response.std_out)
 
     def __init__(self, entry_list):
         self._entries = entry_list

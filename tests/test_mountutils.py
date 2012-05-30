@@ -6,6 +6,7 @@ Tests the MountTable. This will be used to determine if a directory is
 currently mounted as an overlay at this time.
 """
 import fudge
+from nose.tools import raises
 from overlay4u.mountutils import *
 
 TEST_MOUNT_LIST_ENTRY1 = 'dev on /dir type fstype (opt1,opt2,opt3=val)'
@@ -49,6 +50,10 @@ def do_match_entry_line(entry_str, expected):
     assert match_dict['point'] == expected[1]
     assert match_dict['fs_type'] == expected[2]
     assert match_dict['raw_options'] == expected[3]
+
+@raises(UnrecognizedMountEntry)
+def test_match_entry_line_fail():
+    match_entry_line("")
 
 def test_split_mount_options():
     split_options = split_mount_options('opt1,opt2,opt3')
@@ -105,10 +110,10 @@ device3 on /somedir3 type fstype (opt1,opt2,opt3=val)
 device4 on /somedir1 type fstype (opt1,opt2,opt3=val)
 """
 
-@fudge.patch('subprocess.Popen')
-def test_mount_table_fake_load(fake_popen):
-    fake_process = fake_popen.expects_call().returns_fake()
-    fake_process.expects('communicate').returns((TEST_MOUNT_LIST2, ""))
+@fudge.patch('subwrap.run')
+def test_mount_table_fake_load(fake_run):
+    fake_response = fake_run.expects_call().returns_fake()
+    fake_response.has_attr(std_out=TEST_MOUNT_LIST2)
 
     mount_table = MountTable.load()
     assert len(mount_table.as_list()) == 4
