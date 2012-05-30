@@ -1,3 +1,6 @@
+requirements:
+  - subwrap
+
 ---
 profile: development
 

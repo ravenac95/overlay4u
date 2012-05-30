@@ -13,7 +13,6 @@ TEST_MOUNT_LIST_ENTRY2 = '/dev2 on /dir2 type fstype2 (opt1=val,opt2,opt3=val)'
 TEST_MOUNT_LIST_ENTRY3 = '/dev3/.dir on /dir3/.dir type fstype2 (opt1=val,opt2,opt3=val)'
 TEST_MOUNT_LIST_ENTRY4 = '/dev4/dir-with-dash on /dir4/dir-with-dash type fstype2 (opt1=val,opt2,opt3=val)'
 
-
 def test_generated_match_entry_line():
     tests = [
         (TEST_MOUNT_LIST_ENTRY1, (

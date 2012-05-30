@@ -1,4 +1,4 @@
-import subprocess
+import subwrap
 from .mountutils import MountTable
 
 class AlreadyMounted(Exception):
@@ -22,15 +22,12 @@ class OverlayFS(object):
         # Build mount options
         options = "rw,lowerdir=%s,upperdir=%s" % (lower_dir, upper_dir)
         # Run the actual mount
-        process = subprocess.Popen(['mount', '-t', 'overlayfs', '-o', options,
+        process = subwrap.run(['mount', '-t', 'overlayfs', '-o', options,
             'overlayfs', mount_point])
-        # Wait for the mount to complete
-        process.wait()
         return cls(mount_point, lower_dir, upper_dir)
 
     def unmount(self):
-        process = subprocess.Popen(['umount', self.mount_point])
-        process.wait()
+        process = subwrap.run(['umount', self.mount_point])
 
     def __init__(self, mount_point, lower_dir, upper_dir):
         self.mount_point = mount_point

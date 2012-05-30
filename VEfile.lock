@@ -1,3 +1,4 @@
+subwrap (subwrap==0.0.1)
 nose (nose==1.1.2)
 testkit (testkit==0.1.1)
   fudge (fudge==1.0.3)
