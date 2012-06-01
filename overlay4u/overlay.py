@@ -22,12 +22,12 @@ class OverlayFS(object):
         # Build mount options
         options = "rw,lowerdir=%s,upperdir=%s" % (lower_dir, upper_dir)
         # Run the actual mount
-        process = subwrap.run(['mount', '-t', 'overlayfs', '-o', options,
+        response = subwrap.run(['mount', '-t', 'overlayfs', '-o', options,
             'overlayfs', mount_point])
         return cls(mount_point, lower_dir, upper_dir)
 
     def unmount(self):
-        process = subwrap.run(['umount', self.mount_point])
+        response = subwrap.run(['umount', self.mount_point])
 
     def __init__(self, mount_point, lower_dir, upper_dir):
         self.mount_point = mount_point
