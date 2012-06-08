@@ -1,5 +1,6 @@
 import subwrap
 from .mountutils import MountTable
+from .utils import ensure_directories
 
 class AlreadyMounted(Exception):
     pass
@@ -12,7 +13,8 @@ class OverlayFS(object):
     @classmethod
     def mount(cls, mount_point, lower_dir, upper_dir, mount_table=None):
         """Execute the mount. This requires root"""
-        # Load the mount table it isn't given
+        ensure_directories(mount_point, lower_dir, upper_dir)
+        # Load the mount table if it isn't given
         if not mount_table:
             mount_table = MountTable.load()
         # Check if the mount_point is in use
@@ -28,6 +30,7 @@ class OverlayFS(object):
 
     def unmount(self):
         response = subwrap.run(['umount', self.mount_point])
+        subwrap.run()
 
     def __init__(self, mount_point, lower_dir, upper_dir):
         self.mount_point = mount_point
