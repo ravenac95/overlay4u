@@ -30,7 +30,6 @@ class OverlayFS(object):
 
     def unmount(self):
         response = subwrap.run(['umount', self.mount_point])
-        subwrap.run()
 
     def __init__(self, mount_point, lower_dir, upper_dir):
         self.mount_point = mount_point
