@@ -10,6 +10,7 @@ extra caution when running these tests. If this is not a stable release please
 do not run these tests in a production system.
 """
 import os
+from nose.tools import raises
 from testkit import temp_directory, random_string
 from tests import fixtures_path
 from .utils import only_as_root
@@ -72,3 +73,15 @@ def test_mount():
             # Check that the original file still has the same content
             current_orig_data = read_file_data(hello_orig_path)
             assert hello_orig_data == current_orig_data
+
+@only_as_root
+@raises(overlay4u.utils.PathDoesNotExist)
+def test_mount_directory_does_not_exist():
+    # Create and delete 3 directories
+    with temp_directory() as random_mount:
+        pass
+    with temp_directory() as random_lower:
+        pass
+    with temp_directory() as random_upper:
+        pass
+    overlay4u.mount(random_mount, random_lower, random_upper)
