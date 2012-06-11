@@ -23,8 +23,8 @@ Currently Working
 - Creating a table of mounted filesystems
 - Unmounting
 
-Possible interface examples
----------------------------
+Using overlay4u
+---------------
 
 Create an overlay at dest::
     
@@ -42,5 +42,13 @@ If the destination already has something mounted it won't mount again::
     
     # This will throw an error.
     overlay2 = overlay4u.mount('dest', 'lower', 'upper')
+
+List all overlays::
+    
+    import overlay4u
+    
+    overlays = overlay4u.list()
+    # Overlays is now a list of all the currently mounted overlays on your
+    # system
 
 That's all. It's a relatively simple tool.
