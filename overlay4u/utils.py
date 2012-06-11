@@ -1,4 +1,9 @@
 import os
+import random
+
+LOWER_ALPHA = "abcdefghijklmnopqrstuvwxyz"
+UPPER_ALPHA = LOWER_ALPHA.upper()
+ALL_ALPHA = LOWER_ALPHA + UPPER_ALPHA
 
 class PathDoesNotExist(Exception):
     def __init__(self, path):
@@ -21,3 +26,9 @@ def ensure_directory(path):
 def ensure_directories(*paths):
     for path in paths:
         ensure_directory(path)
+
+def random_name(length=10):
+    letter_list = []
+    for i in range(length):
+        letter_list.append(random.choice(ALL_ALPHA))
+    return ''.join(letter_list)

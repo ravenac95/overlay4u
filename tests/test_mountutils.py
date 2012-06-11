@@ -110,6 +110,13 @@ device3 on /somedir3 type fstype (opt1,opt2,opt3=val)
 device4 on /somedir1 type fstype (opt1,opt2,opt3=val)
 """
 
+TEST_MOUNT_LIST3 = """
+device1 on /somedir1 type fstype1 (opt1,opt2,opt3=val)
+device2 on /somedir2 type fstype1 (opt1,opt2,opt3=val)
+device3 on /somedir3 type fstype2 (opt1,opt2,opt3=val)
+device4 on /somedir1 type fstype3 (opt1,opt2,opt3=val)
+"""
+
 @fudge.patch('subwrap.run')
 def test_mount_table_fake_load(fake_run):
     fake_response = fake_run.expects_call().returns_fake()
@@ -117,6 +124,17 @@ def test_mount_table_fake_load(fake_run):
 
     mount_table = MountTable.load()
     assert len(mount_table.as_list()) == 4
+
+@fudge.patch('subwrap.run')
+def test_mount_table_as_list_with_filter(fake_run):
+    fake_response = fake_run.expects_call().returns_fake()
+    fake_response.has_attr(std_out=TEST_MOUNT_LIST3)
+
+    mount_table = MountTable.load()
+    assert len(mount_table.as_list(fs_type="fstype1")) == 2
+    assert len(mount_table.as_list(fs_type="fstype2")) == 1
+    assert len(mount_table.as_list(fs_type="fstype3")) == 1
+
 
 class TestMountTable(object):
     def setup(self):

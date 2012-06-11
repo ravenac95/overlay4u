@@ -53,8 +53,12 @@ class MountTable(object):
     def __init__(self, entry_list):
         self._entries = entry_list
 
-    def as_list(self):
-        return self._entries
+    def as_list(self, fs_type=None):
+        """List mount entries"""
+        entries = self._entries
+        if fs_type:
+            entries = filter(lambda a: a.fs_type == fs_type, entries)
+        return entries
 
     def list_mount_points(self):
         return map(lambda a: a.mount_point, self._entries)
