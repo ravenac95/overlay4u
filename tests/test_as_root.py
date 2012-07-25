@@ -16,11 +16,13 @@ from tests import fixtures_path
 from .utils import only_as_root
 import overlay4u
 
+
 def read_file_data(filepath):
     f = open(filepath)
     data = f.read()
     f.close()
     return data
+
 
 @only_as_root
 def test_mount():
@@ -73,6 +75,28 @@ def test_mount():
             # Check that the original file still has the same content
             current_orig_data = read_file_data(hello_orig_path)
             assert hello_orig_data == current_orig_data
+
+
+@only_as_root
+def test_mount_and_load():
+    unmounted = False
+    with temp_directory() as temp_lower_dir:
+        with temp_directory() as temp_upper_dir:
+            with temp_directory() as temp_mount_point:
+                try:
+                    overlay = overlay4u.mount(temp_mount_point,
+                            temp_lower_dir, temp_upper_dir)
+                    same_overlay = overlay4u.get(temp_mount_point)
+                    assert overlay.mount_point == same_overlay.mount_point
+                    assert overlay.lower_dir == same_overlay.lower_dir
+                    assert overlay.upper_dir == same_overlay.upper_dir
+                    same_overlay.unmount()
+                    unmounted = True
+                finally:
+                    if not unmounted:
+                        overlay.unmount()
+
+
 
 @only_as_root
 @raises(overlay4u.utils.PathDoesNotExist)

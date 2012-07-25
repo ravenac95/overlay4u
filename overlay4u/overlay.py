@@ -2,6 +2,7 @@ import subwrap
 from .mountutils import MountTable
 from .utils import ensure_directories, random_name
 
+
 class AlreadyMounted(Exception):
     pass
 
@@ -67,6 +68,10 @@ class OverlayFS(object):
         return '<OverlayFS "%s">' % self.mount_point
 
 
+class OverlayFSDoesNotExist(Exception):
+    pass
+
+
 class OverlayFSManager(object):
     @classmethod
     def list(cls, mount_table=None):
@@ -77,3 +82,12 @@ class OverlayFSManager(object):
         for entry in mount_entries:
             overlay_entries.append(OverlayFS.from_entry(entry))
         return overlay_entries
+
+    @classmethod
+    def get(cls, mount_point, mount_table=None):
+        overlayfs_list = cls.list(mount_table=mount_table)
+        for overlayfs in overlayfs_list:
+            if overlayfs.mount_point == mount_point:
+                return overlayfs
+        raise OverlayFSDoesNotExist('Overlay with mount point, '
+                '"%s", does not exist' % mount_point)

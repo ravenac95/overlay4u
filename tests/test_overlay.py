@@ -149,3 +149,41 @@ def test_overlayfs_manager_list(fake_mount_table_cls, fake_overlayfs_cls):
 
     overlay_list = OverlayFSManager.list()
     assert len(overlay_list) == 4
+
+
+class FakeOverlay(object):
+    def __init__(self, mount_point, lower_dir, upper_dir):
+        self.mount_point = mount_point
+        self.lower_dir = lower_dir
+        self.upper_dir = upper_dir
+
+
+def test_overlayfs_manager_get():
+    fake_overlay1 = FakeOverlay('m1', 'lo1', 'up1')
+    fake_overlay2 = FakeOverlay('m2', 'lo2', 'up2')
+    fake_overlays = [
+        fake_overlay1,
+        fake_overlay2,
+    ]
+    fake_overlay_list_method = OverlayFSManager.list = fudge.Fake()
+    fake_overlay_list_method.expects_call().returns(fake_overlays)
+
+    overlay1 = OverlayFSManager.get('m1')
+    overlay2 = OverlayFSManager.get('m2')
+
+    assert overlay1 == fake_overlay1
+    assert overlay2 == fake_overlay2
+
+
+@raises(OverlayFSDoesNotExist)
+def test_overlayfs_manager_get_fails():
+    fake_overlay1 = FakeOverlay('m1', 'lo1', 'up1')
+    fake_overlay2 = FakeOverlay('m2', 'lo2', 'up2')
+    fake_overlays = [
+        fake_overlay1,
+        fake_overlay2,
+    ]
+    fake_overlay_list_method = OverlayFSManager.list = fudge.Fake()
+    fake_overlay_list_method.expects_call().returns(fake_overlays)
+
+    OverlayFSManager.get('m3')
