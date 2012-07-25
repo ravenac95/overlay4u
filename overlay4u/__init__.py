@@ -1,4 +1,4 @@
-from overlay import OverlayFS, OverlayFSManager
+from overlay import OverlayFS, OverlayFSManager, OverlayFSDoesNotExist
 
 
 def mount(directory, lower_dir, upper_dir, mount_table=None):
