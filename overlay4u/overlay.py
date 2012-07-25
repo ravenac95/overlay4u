@@ -5,12 +5,15 @@ from .utils import ensure_directories, random_name
 class AlreadyMounted(Exception):
     pass
 
+
 class InvalidOverlayFS(Exception):
     pass
+
 
 class FakeMountVerify(object):
     def is_mounted(self, *args):
         return False
+
 
 class OverlayFS(object):
     @classmethod
@@ -27,10 +30,10 @@ class OverlayFS(object):
         # Build mount options
         options = "rw,lowerdir=%s,upperdir=%s" % (lower_dir, upper_dir)
         # Run the actual mount
-        response = subwrap.run(['mount', '-t', 'overlayfs', '-o', options,
+        subwrap.run(['mount', '-t', 'overlayfs', '-o', options,
             'olyfs%s' % random_name(), mount_point])
         return cls(mount_point, lower_dir, upper_dir)
-    
+
     @classmethod
     def from_entry(cls, entry):
         options = entry.options
@@ -53,7 +56,7 @@ class OverlayFS(object):
         return cls(entry.mount_point, lower_dir, upper_dir)
 
     def unmount(self):
-        response = subwrap.run(['umount', self.mount_point])
+        subwrap.run(['umount', self.mount_point])
 
     def __init__(self, mount_point, lower_dir, upper_dir):
         self.mount_point = mount_point
@@ -62,6 +65,7 @@ class OverlayFS(object):
 
     def __repr__(self):
         return '<OverlayFS "%s">' % self.mount_point
+
 
 class OverlayFSManager(object):
     @classmethod
