@@ -1,17 +1,17 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.3-dev'
+VERSION = '0.0.3'
 
 LONG_DESCRIPTION = open('README.rst').read()
 
 setup(name='overlay4u',
     version=VERSION,
-    description="overlay4u",
+    description='overlay4u',
     long_description=LONG_DESCRIPTION,
     keywords='overlayfs',
     author='Reuven V. Gonzales',
     author_email='reuven@tobetter.us',
-    url="https://github.com/ravenac95/overlay4u",
+    url='https://github.com/ravenac95/overlay4u',
     license='MIT',
     platforms='Ubuntu',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),

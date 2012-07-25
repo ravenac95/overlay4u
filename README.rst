@@ -51,4 +51,10 @@ List all overlays::
     # Overlays is now a list of all the currently mounted overlays on your
     # system
 
+Grab a previously mounted overlayfs::
+
+    import overlay4u
+
+    overlay = overlay4u.get('/some_mount_point')
+
 That's all. It's a relatively simple tool.
